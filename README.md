@@ -32,9 +32,7 @@ permissions.
 
 ## Requirements
 
-- Orca 1.4.246 or newer.
-- Read access to this repository from the machine running Orca. Orca clones it with that machine's
-  own Git credentials: an SSH key in the agent or keychain, or `gh auth setup-git` for HTTPS.
+Orca 1.4.246 or newer.
 
 ## Installation
 
@@ -42,7 +40,7 @@ permissions.
 
 1. Open **Settings > Plugins**.
 2. Choose **Add plugin > From a Git URL…** and enter
-   `git@github.com:4bdullatif/orca-php-syntax.git` (or the HTTPS URL of this repository).
+   `https://github.com/4bdullatif/orca-php-syntax`.
 3. Confirm the install. If the plugin then shows as pending, turn it on with its switch in the
    plugin list.
 
@@ -51,7 +49,7 @@ Open PHP files switch to the new highlighting immediately; no restart is needed.
 ### From a terminal
 
 ```sh
-orca plugin install git@github.com:4bdullatif/orca-php-syntax.git
+orca plugin install 4bdullatif/orca-php-syntax
 orca plugin enable 4bdullatif.php-syntax
 ```
 
@@ -153,14 +151,20 @@ examples/demo.php           A template that exercises every embedded language
 licenses/                   Upstream license texts
 ```
 
+### Contributing
+
+`main` is protected: changes land through a pull request once the **Check plugin** workflow passes.
+Commit messages and pull request titles follow
+[Conventional Commits](https://www.conventionalcommits.org/en/v1.0.0/).
+
 ## Releasing
 
-1. Bump `version` in `orca-plugin.json` and `package.json`.
-2. Commit, then tag the commit and push the tag:
-   `git tag -a v0.2.0 -m v0.2.0 && git push origin v0.2.0`.
+Bump `version` in `orca-plugin.json`, the only place the version is kept, and merge the change into
+`main`. Once the checks pass on `main`, the **Release** workflow tags the commit `vX.Y.Z` and
+publishes a GitHub release with generated notes. Pushes that keep the version publish nothing.
 
-Orca installs the newest `vX.Y.Z` tag of a repository, and the default branch only when there is
-no tag.
+Orca installs the newest `vX.Y.Z` tag of a repository, so a release is what existing installs
+update to.
 
 ## License
 
