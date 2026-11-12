@@ -2,19 +2,24 @@
   "name": "orca-php-syntax",
   "version": "0.1.0",
   "private": true,
-  "type": "module",
-  "description": "Development checks for the data-only Orca PHP syntax plugin",
+  "description": "Build and checks for the data-only Orca PHP syntax plugin",
   "license": "MIT",
-  "engines": {
-    "node": ">=22"
-  },
+  "type": "module",
   "scripts": {
     "build": "node scripts/build-grammars.mjs",
     "check": "node scripts/build-grammars.mjs --check",
-    "test": "node --test tests/*.test.mjs"
+    "test": "node --test tests/*.test.mjs",
+    "lint": "oxlint --deny-warnings",
+    "format": "oxfmt --write .",
+    "format:check": "oxfmt --check ."
   },
   "devDependencies": {
+    "oxfmt": "0.78.0",
+    "oxlint": "1.93.0",
     "vscode-oniguruma": "2.0.1",
     "vscode-textmate": "9.3.2"
+  },
+  "engines": {
+    "node": ">=22"
   }
 }
