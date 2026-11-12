@@ -1,6 +1,5 @@
 {
   "name": "orca-php-syntax",
-  "version": "0.1.0",
   "private": true,
   "description": "Build and checks for the data-only Orca PHP syntax plugin",
   "license": "MIT",
