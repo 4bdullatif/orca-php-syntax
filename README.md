@@ -1,57 +1,168 @@
 # PHP Syntax for Orca
 
-PHP highlighting for [Orca](https://www.onorca.dev/), built from the grammars VS Code ships:
+PHP syntax highlighting for the [Orca](https://www.onorca.dev/) editor, built from the same TextMate
+grammars VS Code ships. PHP files are highlighted together with everything a real PHP codebase mixes
+into them: the HTML around the code, the CSS and JavaScript inside it, and the SQL in its strings.
 
-- PHP code, with the HTML around it.
-- PHP tags anywhere in a template: in HTML text, attribute values, inside a tag, in comments, and in
-  `<script>` and `<style>` bodies.
-- SQL in query strings, and HTML, SQL, JavaScript, CSS, JSON and XML in labelled heredocs.
+The plugin is data only. It contributes grammars and editor rules, runs no code and asks for no
+permissions.
 
-It is a data-only plugin: no worker, no capabilities, nothing runs.
+## Features
 
-While it is enabled it colors `.php`, `.php4`, `.php5`, `.phtml` and `.ctp` files in place of Orca's
-built-in PHP highlighting. Disable it to get Orca's colors back.
+- **PHP code**: classes, enums, attributes, `match`, closures and arrow functions, typed properties
+  and constants, heredocs, interpolation and PHPDoc comments.
+- **Templates**: HTML around `<?php ... ?>` blocks, with PHP tags recognized wherever PHP allows
+  them: in text, attribute values, inside a tag, in HTML comments, and in `<script>` and `<style>`
+  bodies.
+- **Embedded languages**: SQL in query strings (`"SELECT ..."`), and HTML, SQL, JavaScript, CSS,
+  JSON and XML in labelled heredocs such as `<<<SQL`.
+- **Editing**: `//` and `/* */` comment toggling, bracket matching, and auto-closing for brackets,
+  quotes and `/** */` docblocks.
 
-## Install
-
-```sh
-orca plugin install 4bdullatif/orca-php-syntax
+```php
+<ul class="<?= $theme ?>">
+  <?php foreach ($users as $user): ?>
+    <li><a href="/users/<?= $user->id ?>"><?= e($user->name) ?></a></li>
+  <?php endforeach; ?>
+</ul>
+<script>
+  const users = <?= json_encode($users) ?>;
+</script>
 ```
 
-Requires Orca 1.4.246 or newer. A private repository installs with the Git credentials of the
-machine running Orca (`gh auth setup-git`, the macOS keychain or an SSH agent).
+## Requirements
 
-## Differences from VS Code
+- Orca 1.4.246 or newer.
+- Read access to this repository from the machine running Orca. Orca clones it with that machine's
+  own Git credentials: an SSH key in the agent or keychain, or `gh auth setup-git` for HTTPS.
 
-Orca does not read grammar injections, so the build lists the PHP tag rule first in the HTML, CSS
-and JavaScript grammars instead (see `THIRD_PARTY_NOTICES.md`). On a corpus of WordPress, Laravel,
-Symfony and php-src files the tokens match VS Code's, except:
+## Installation
 
-- PHP inside `<script type="text/x-template">` (and other HTML-template scripts) is highlighted;
-  VS Code leaves it plain.
-- PHP written right after a valueless attribute (`data-dark<?php ... ?>`) is not wrapped in that
-  attribute's scope. Colors are unchanged.
+### From the Orca settings
+
+1. Open **Settings > Plugins**.
+2. Choose **Add plugin > From a Git URL…** and enter
+   `git@github.com:4bdullatif/orca-php-syntax.git` (or the HTTPS URL of this repository).
+3. Confirm the install. If the plugin then shows as pending, turn it on with its switch in the
+   plugin list.
+
+Open PHP files switch to the new highlighting immediately; no restart is needed.
+
+### From a terminal
+
+```sh
+orca plugin install git@github.com:4bdullatif/orca-php-syntax.git
+orca plugin enable 4bdullatif.php-syntax
+```
+
+The `orca` command is not on your `PATH` until you register it under **Settings > Orca CLI > Shell
+command**. Until then, call it by its full path, for example on macOS
+`/Applications/Orca.app/Contents/Resources/bin/orca`.
+
+### Updating and removing
+
+Use the plugin's **Update** and **Remove** actions in **Settings > Plugins**, or:
+
+```sh
+orca plugin update 4bdullatif.php-syntax
+orca plugin uninstall 4bdullatif.php-syntax
+```
+
+## Supported files
+
+`.php`, `.php4`, `.php5`, `.phtml` and `.ctp`: the same files Orca and VS Code already treat as PHP.
+
+While the plugin is enabled it replaces Orca's built-in PHP highlighting for these files. Disable it
+to get Orca's own colors back. The plugin also bundles HTML, CSS, JavaScript, SQL, JSON and XML
+grammars, but only to highlight them inside PHP files: it does not change how `.html`, `.css`,
+`.js`, `.sql`, `.json` or `.xml` files look.
+
+## PHP version support
+
+The grammar recognizes PHP syntax up to PHP 8.3 completely and most of PHP 8.4. Code using newer
+syntax still highlights correctly around it.
+
+- **PHP 8.3 and older**: full support, including enums, readonly classes, DNF types and typed
+  class constants.
+- **PHP 8.4**: asymmetric visibility (`private(set)`) and `new Foo()->bar()` are supported. In
+  property hooks, `get` is colored like a constant and `set` like a function name; the hook bodies
+  are highlighted normally.
+- **PHP 8.5**: the pipe operator `|>` is colored as two operators, `|` and `>`.
+  `clone($object, [...])` is supported.
+
+The same limits apply in VS Code, since the grammar is the one it ships.
+
+## How it works
+
+The grammars are generated by `scripts/build-grammars.mjs` from a pinned commit of the VS Code
+repository. Orca's TextMate engine does not read grammar `injections`, which VS Code's PHP grammar
+uses to find `<?php` tags inside HTML, CSS and JavaScript. The build script reproduces that
+injection by listing the PHP tag rule first wherever those grammars scan, so PHP tags are found in
+the same places VS Code finds them. [THIRD_PARTY_NOTICES.md](THIRD_PARTY_NOTICES.md) lists every
+change made to the upstream grammars.
+
+Against a corpus of WordPress, Laravel, Symfony and php-src files, the resulting tokens match VS
+Code's except for these cases:
+
+- PHP inside `<script type="text/x-template">` and similar HTML-template scripts is highlighted.
+  VS Code leaves it plain, although PHP does run there.
 - `<?= ... ?>` written inside an HTML, JavaScript or CSS heredoc is highlighted as PHP; VS Code
   shows it as heredoc text.
-- A stray `<` in HTML text is not marked invalid.
+- PHP written directly after an attribute that has no value (`data-dark<?php ... ?>`) is not
+  wrapped in that attribute's scope. The colors are the same.
+- A stray `<` in HTML text is not marked as invalid.
 
-Comment toggling uses `//` everywhere in the file, including its HTML parts.
+Orca applies one language configuration per file, so comment toggling uses `//` in the HTML parts
+of a file too.
 
-## Develop
+## Development
 
-With Node.js 22 or newer:
+Requires Node.js 22 or newer.
 
 ```sh
 npm ci --ignore-scripts
-npm test         # manifest, grammar and token checks with the real TextMate engine
-npm run build    # regenerate syntaxes/ from the pinned VS Code commit
-npm run check    # fail when syntaxes/ differs from a fresh build
-orca plugin validate .
 ```
 
-To try a change, `orca plugin dev watch .` loads the folder into Orca and reloads it on save.
+| Command          | What it does                                                         |
+| ---------------- | -------------------------------------------------------------------- |
+| `npm test`       | Manifest, grammar and tokenization tests on the real TextMate engine |
+| `npm run build`  | Regenerates `syntaxes/` from the pinned VS Code commit               |
+| `npm run check`  | Fails when `syntaxes/` differs from a fresh build                    |
+| `npm run lint`   | Lints the scripts and tests with oxlint                              |
+| `npm run format` | Formats the repository with oxfmt (`format:check` only checks)       |
+
+To see a change in Orca, `orca plugin dev watch .` loads this folder as a development plugin and
+reloads it on every save. `orca plugin validate .` runs the checks Orca applies when it installs a
+plugin.
+
+### Updating the grammars
+
+1. Set `VSCODE_COMMIT` in `scripts/build-grammars.mjs` to the new VS Code commit.
+2. Run `npm run build`, then `npm test`, and review the diff of `syntaxes/`.
+3. Update the commit in `THIRD_PARTY_NOTICES.md` and the license texts in `licenses/` if they
+   changed.
+
+### Project layout
+
+```text
+orca-plugin.json            Plugin manifest
+syntaxes/                   Generated grammars and the hand-written language configuration
+scripts/build-grammars.mjs  Grammar build from VS Code
+tests/                      Node test runner suites
+examples/demo.php           A template that exercises every embedded language
+licenses/                   Upstream license texts
+```
+
+## Releasing
+
+1. Bump `version` in `orca-plugin.json` and `package.json`.
+2. Commit, then tag the commit and push the tag:
+   `git tag -a v0.2.0 -m v0.2.0 && git push origin v0.2.0`.
+
+Orca installs the newest `vX.Y.Z` tag of a repository, and the default branch only when there is
+no tag.
 
 ## License
 
-MIT for this repository's own files. The grammars keep their upstream licenses, listed in
-`THIRD_PARTY_NOTICES.md` with the texts in `licenses/`.
+This repository's own files are released under the [MIT License](LICENSE). The grammars keep their
+upstream licenses; see [THIRD_PARTY_NOTICES.md](THIRD_PARTY_NOTICES.md) and `licenses/`.
