@@ -6,7 +6,10 @@ const root = new URL('../', import.meta.url)
 const manifest = JSON.parse(readFileSync(new URL('orca-plugin.json', root), 'utf8'))
 const syntaxes = manifest.contributes.syntaxes
 const grammars = new Map(
-  syntaxes.map((syntax) => [syntax.scopeName, JSON.parse(readFileSync(new URL(syntax.path, root), 'utf8'))])
+  syntaxes.map((syntax) => [
+    syntax.scopeName,
+    JSON.parse(readFileSync(new URL(syntax.path, root), 'utf8'))
+  ])
 )
 // source.java is only reached from JSP-style comments in XML heredocs; Orca leaves it plain.
 const EXTERNAL_SCOPES = new Set(['source.java'])
@@ -43,7 +46,9 @@ function* rules(grammar) {
 }
 
 test('only the PHP syntax claims files, with the extensions Orca already treats as PHP', () => {
-  const claiming = syntaxes.filter((syntax) => syntax.extensions?.length || syntax.filenames?.length)
+  const claiming = syntaxes.filter(
+    (syntax) => syntax.extensions?.length || syntax.filenames?.length
+  )
   assert.deepEqual(
     claiming.map((syntax) => [syntax.scopeName, syntax.extensions]),
     [['text.html.php', ['.php', '.php4', '.php5', '.phtml', '.ctp']]]
@@ -62,7 +67,11 @@ test('every grammar matches its manifest scope and carries nothing Orca drops', 
       }
       for (const key of CAPTURE_KEYS) {
         for (const captureKey of Object.keys(rule[key] ?? {})) {
-          assert.match(captureKey, /^(?:0|[1-9][0-9]{0,2})$/, `${scopeName}: capture key ${captureKey}`)
+          assert.match(
+            captureKey,
+            /^(?:0|[1-9][0-9]{0,2})$/,
+            `${scopeName}: capture key ${captureKey}`
+          )
         }
       }
     }
@@ -89,7 +98,14 @@ test('every include resolves inside the plugin, except the scopes left plain on 
 })
 
 test('the language configuration is plain JSON with only the keys Orca reads', () => {
-  const configuration = JSON.parse(readFileSync(new URL('syntaxes/language-configuration.json', root), 'utf8'))
-  assert.deepEqual(Object.keys(configuration), ['comments', 'brackets', 'autoClosingPairs', 'surroundingPairs'])
+  const configuration = JSON.parse(
+    readFileSync(new URL('syntaxes/language-configuration.json', root), 'utf8')
+  )
+  assert.deepEqual(Object.keys(configuration), [
+    'comments',
+    'brackets',
+    'autoClosingPairs',
+    'surroundingPairs'
+  ])
   assert.deepEqual(configuration.comments, { lineComment: '//', blockComment: ['/*', '*/'] })
 })

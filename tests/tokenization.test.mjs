@@ -8,25 +8,33 @@ function tokensOf(document, line, fragment) {
   const start = source.indexOf(fragment)
   assert.notEqual(start, -1, `missing fixture fragment: ${fragment}`)
   const end = start + fragment.length
-  const tokens = document.results[line].filter((token) => token.startIndex < end && token.endIndex > start)
+  const tokens = document.results[line].filter(
+    (token) => token.startIndex < end && token.endIndex > start
+  )
   assert.ok(tokens.length > 0)
   return tokens
 }
 
+function fragmentLabel(line, fragment) {
+  return `${JSON.stringify(fragment)} on line ${line + 1}`
+}
+
 function expectScope(document, line, fragment, scope) {
   for (const token of tokensOf(document, line, fragment)) {
+    const scopes = token.scopes.join(' ')
     assert.ok(
       token.scopes.includes(scope),
-      `${JSON.stringify(fragment)} on line ${line + 1}: expected ${scope}, got ${token.scopes.join(' ')}`
+      `${fragmentLabel(line, fragment)}: expected ${scope}, got ${scopes}`
     )
   }
 }
 
 function expectNoScope(document, line, fragment, scope) {
   for (const token of tokensOf(document, line, fragment)) {
+    const scopes = token.scopes.join(' ')
     assert.ok(
       !token.scopes.includes(scope),
-      `${JSON.stringify(fragment)} on line ${line + 1}: unexpected ${scope} in ${token.scopes.join(' ')}`
+      `${fragmentLabel(line, fragment)}: unexpected ${scope} in ${scopes}`
     )
   }
 }
