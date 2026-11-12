@@ -6,6 +6,7 @@
   "name": "PHP Syntax",
   "version": "0.1.0",
   "description": "PHP highlighting with the HTML, CSS, JavaScript and SQL around and inside it, using VS Code's grammars.",
+  "author": { "name": "4bdullatif", "url": "https://github.com/4bdullatif" },
   "license": "MIT",
   "repository": "https://github.com/4bdullatif/orca-php-syntax",
   "engines": { "orca": ">=1.4.246" },
