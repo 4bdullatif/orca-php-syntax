@@ -1,0 +1,72 @@
+{
+  "$schema": "https://raw.githubusercontent.com/stablyai/orca/main/docs/schemas/plugins/orca-plugin.v2.schema.json",
+  "manifestVersion": 2,
+  "execution": "data",
+  "id": "php-syntax",
+  "name": "PHP Syntax",
+  "version": "0.1.0",
+  "description": "PHP highlighting with the HTML, CSS, JavaScript and SQL around and inside it, using VS Code's grammars.",
+  "license": "MIT",
+  "repository": "https://github.com/4bdullatif/orca-php-syntax",
+  "engines": { "orca": ">=1.4.246" },
+  "contributes": {
+    "syntaxes": [
+      {
+        "id": "php",
+        "title": "PHP",
+        "scopeName": "text.html.php",
+        "path": "syntaxes/php-html.tmLanguage.json",
+        "configuration": "syntaxes/language-configuration.json",
+        "extensions": [".php", ".php4", ".php5", ".phtml", ".ctp"]
+      },
+      {
+        "id": "php-source",
+        "title": "PHP code grammar dependency",
+        "scopeName": "source.php",
+        "path": "syntaxes/php.tmLanguage.json"
+      },
+      {
+        "id": "html",
+        "title": "HTML grammar dependency",
+        "scopeName": "text.html.basic",
+        "path": "syntaxes/html.tmLanguage.json"
+      },
+      {
+        "id": "html-derivative",
+        "title": "HTML (derivative) grammar dependency",
+        "scopeName": "text.html.derivative",
+        "path": "syntaxes/html-derivative.tmLanguage.json"
+      },
+      {
+        "id": "javascript",
+        "title": "JavaScript grammar dependency",
+        "scopeName": "source.js",
+        "path": "syntaxes/javascript.tmLanguage.json"
+      },
+      {
+        "id": "css",
+        "title": "CSS grammar dependency",
+        "scopeName": "source.css",
+        "path": "syntaxes/css.tmLanguage.json"
+      },
+      {
+        "id": "sql",
+        "title": "SQL grammar dependency",
+        "scopeName": "source.sql",
+        "path": "syntaxes/sql.tmLanguage.json"
+      },
+      {
+        "id": "json",
+        "title": "JSON grammar dependency",
+        "scopeName": "source.json",
+        "path": "syntaxes/json.tmLanguage.json"
+      },
+      {
+        "id": "xml",
+        "title": "XML grammar dependency",
+        "scopeName": "text.xml",
+        "path": "syntaxes/xml.tmLanguage.json"
+      }
+    ]
+  }
+}

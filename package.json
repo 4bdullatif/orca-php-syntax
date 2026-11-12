@@ -1,0 +1,20 @@
+{
+  "name": "orca-php-syntax",
+  "version": "0.1.0",
+  "private": true,
+  "type": "module",
+  "description": "Development checks for the data-only Orca PHP syntax plugin",
+  "license": "MIT",
+  "engines": {
+    "node": ">=22"
+  },
+  "scripts": {
+    "build": "node scripts/build-grammars.mjs",
+    "check": "node scripts/build-grammars.mjs --check",
+    "test": "node --test tests/*.test.mjs"
+  },
+  "devDependencies": {
+    "vscode-oniguruma": "2.0.1",
+    "vscode-textmate": "9.3.2"
+  }
+}
